@@ -1,6 +1,7 @@
 #include "AVLtree.h"
 #include<iostream>
 #include<fstream>
+#include<sstream>
 using namespace std;
 
 node::node(int kk, datatype* vv, node* ff,int lr){
@@ -38,6 +39,7 @@ avl::avl() {
 	root = NULL;
 	number = 0;
 	filesize = 0;
+	dataname = "";
 }
 
 bool avl::insert(node* n,int kk, datatype* vv) {
@@ -233,6 +235,27 @@ node* avl::seek(int kk) {
 	return NULL;
 }
 
+datatype* avl::scan(int kk) {
+	node* n = seek(kk);
+	if (n == NULL)
+		return NULL;
+	if ( n->value != NULL && n->is_fresh ==false)
+		return n->value;
+	else {
+		fstream dt((dataname + ".dat").c_str());
+		dt.seekg(16 * (n->address), ios::beg);
+		int temp_i=0;
+		char temp_str[12] = { ' ' };
+		dt.read((char*)&temp_i, sizeof(int));
+		dt.read(temp_str, sizeof(char) * 12);
+		datatype* new_data = new datatype;
+		new_data->i = temp_i;
+		strcpy_s(new_data->s, temp_str);
+		n->value = new_data;
+		return new_data;
+	}
+}
+
 void avl::save(string index, string data) {
 	ofstream idx((index+".id").c_str());
 	fstream dat((data + ".dat").c_str(),ios::binary|ios::in|ios::out);
@@ -246,6 +269,10 @@ void avl::save(string index, string data) {
 		}
 		idx << endl;
 	}
+	idx << "filesize" << endl;
+	idx << filesize << endl << endl;
+	idx.close();
+	dat.close();
 }
 
 void avl::rec_save(node* n, ofstream& idx, fstream& dt, string adr) {
@@ -276,4 +303,67 @@ void avl::rec_save(node* n, ofstream& idx, fstream& dt, string adr) {
 	n->is_fresh = false;
 	rec_save(n->lchild, idx, dt, adr + "0");
 	rec_save(n->rchild, idx, dt, adr + "1");
+}
+
+void avl::load(string index,string data) {
+	dataname = data;
+	fstream idx((index + ".id").c_str());
+	string line;
+	if (!idx) {
+		cerr << "Error to open index file" << endl;
+	}
+	else {
+		while (true) {
+			getline(idx, line);
+			if (line=="")break;
+			if (line[0] == 'r') {
+				stringstream ss;
+				ss << line;
+				string loca;ss >> loca;
+				int kk; ss >> kk;
+				int adr; ss >> adr;
+				if (loca == "r") {
+					root = new node(kk, NULL, -1, adr);
+				}
+				else {
+					node* n = root;
+					for (int i = 1; i < loca.size() - 1; i++) {
+						if (loca[i] == '0')
+							n = n->lchild;
+						if (loca[i] == '1')
+							n = n->rchild;
+					}
+					if (loca[loca.size() - 1] == '0') {
+						n->lchild = new node(kk, n, 0, adr);
+					}
+					else {
+						n->rchild = new node(kk, n, 1, adr);
+					}
+				}
+			}
+			else if (line[0] == 'o') {
+				getline(idx, line);
+				stringstream ss;
+				ss << line;
+				int i;
+				while (ss >> i)
+					overlap.push_back(i);
+			}
+			else if (line[0] == 'f') {
+				getline(idx, line);
+				stringstream ss;
+				ss << line;
+				ss >> filesize;
+			}
+		}
+	}
+	adjust_height(root);
+}
+
+void avl::adjust_height(node* n) {
+	if (n == NULL)
+		return;
+	adjust_height(n->lchild);
+	adjust_height(n->rchild);
+	n->h = (h(n->lchild) > h(n->rchild) ? h(n->lchild) + 1 : h(n->rchild) + 1);
 }

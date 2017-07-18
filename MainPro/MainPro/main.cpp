@@ -1,13 +1,18 @@
 #include<iostream>
 #include<string>
 #include"AVLtree.h"
+#include<ctime>
 using namespace std;
 
-void test1(); void test2(); void test3();
+void test1(); //insert()
+void test2(); //insert() & del()
+void test3(); //ins() & del() & datatype
+void test4(); //load();scan();
+void test5(); //1000 data
 void printTree(node* n);
 
 int main() {
-	test3();
+	test5();
 	system("pause");
 	return 0;
 }
@@ -61,6 +66,48 @@ void test3() {
 	printTree(t.root);
 }
 
+void test4() {
+	avl t;
+	for (int k = 0; k < 7; k++) {
+		datatype* new_data = new datatype;
+		new_data->i = k + 10;
+		strcpy_s(new_data->s, "this leaf");
+		t.insert(t.root, k, new_data);
+	}
+	t.save("index", "data");
+	printTree(t.root);
+	cout << endl;
+
+	avl t2;
+	t2.load("index", "data");
+	printTree(t2.root);
+
+	datatype* d = t.scan(5);
+	cout << d->i << "\t" << d->s << endl;
+	for (int k = 0; k < 7; k++) {
+		d = t2.scan(k);
+		cout << d->i << "\t" << d->s << endl;
+	}
+}
+
+void test5() {
+	double start, end;
+	start = clock();
+	avl t;
+	for (int k = 0; k < 1000000; k++) {
+		datatype* new_data = new datatype;
+		new_data->i = k + 10;
+		strcpy_s(new_data->s, "this leaf");
+		t.insert(t.root, k, new_data);
+	}
+	t.save("index", "data");
+	end = clock();
+	double cost = end - start;
+	cout << "Time cost:" << cost / 1000 << "s" << endl;
+
+}
+
+//key: l r LR h fresh adr
 void printTree(node* n) {
 	if (n != NULL) {
 		cout << n->key << ":\t";

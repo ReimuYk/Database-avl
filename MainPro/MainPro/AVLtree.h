@@ -38,12 +38,15 @@ public:
 	void rRotate(node* n);
 	void balance(node* n);
 	node* seek(int kk);
+	datatype* scan(int kk);
 	void load(string index,string data);
+	void adjust_height(node* n);
 	void save(string index,string data);
 	void rec_save(node* n, ofstream& idx, fstream& dt, string adr);
 
 	node* root;
 	int number;
 	int filesize;
+	string dataname;
 	vector<int> overlap;
 };
