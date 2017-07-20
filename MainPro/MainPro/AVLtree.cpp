@@ -117,16 +117,23 @@ bool avl::del(int kk) {
 			high->address = low->address;
 			if (low->LR == 0) {
 				low->father->lchild = low->lchild;
+				if(low->lchild)
+					low->lchild->father = low->father;
 			}
 			else if (low->LR == 1) {
 				low->father->rchild = low->lchild;
+				if(low->lchild)
+					low->lchild->father = low->father;
 				if (low->father->rchild)
 					low->father->rchild->LR = 1;
 			}
 		}
-		while (low) {
-			balance(low);
-			low = low->father;
+		node* tn = low->father;
+		/*delete[](low->value);
+		delete[]low;*/
+		while (tn) {
+			balance(tn);
+			tn = tn->father;
 		}
 		number -= 1;
 		return true;
@@ -139,6 +146,7 @@ bool avl::change(int kk, datatype* vv) {
 		return false;
 	}
 	else {
+		delete[](n->value);
 		n->value = vv;
 		overlap.push_back(n->address);
 		n->is_fresh = true;
@@ -202,7 +210,7 @@ void avl::rRotate(node* n) {
 void avl::balance(node* n) {
 	n->h = (h(n->lchild) > h(n->rchild) ? h(n->lchild) + 1 : h(n->rchild) + 1);
 	if (h(n->lchild) - h(n->rchild) == 2) {
-		if (h(n->lchild->lchild) > h(n->lchild->rchild)) {
+		if (h(n->lchild->lchild) >= h(n->lchild->rchild)) {
 			rRotate(n);
 		}
 		else {
@@ -239,7 +247,7 @@ datatype* avl::scan(int kk) {
 	node* n = seek(kk);
 	if (n == NULL)
 		return NULL;
-	if ( n->value != NULL && n->is_fresh ==false)
+	if ( n->value != NULL)
 		return n->value;
 	else {
 		fstream dt((dataname + ".dat").c_str());

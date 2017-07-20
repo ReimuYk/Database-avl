@@ -1,3 +1,4 @@
 ﻿  main.cpp
+f:\_main\程序设计\git\database-avl\mainpro\mainpro\main.cpp(55): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
   MainPro.vcxproj -> F:\_Main\程序设计\git\Database-avl\MainPro\Debug\MainPro.exe
   MainPro.vcxproj -> F:\_Main\程序设计\git\Database-avl\MainPro\Debug\MainPro.pdb (Full PDB)
