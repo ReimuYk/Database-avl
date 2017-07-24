@@ -266,8 +266,8 @@ datatype* avl::scan(int kk) {
 
 void avl::save(string index, string data) {
 	ofstream idx((index+".id").c_str());
-	fstream dat((data + ".dat").c_str(),ios::binary|ios::in|ios::out);
-	rec_save(root, idx, dat, "r");
+	savedata(data);
+	rec_save_idx(root, idx, "r");
 	idx << "overlap" << endl;
 	if (overlap.size() == 0)
 		idx << "null" << endl;
@@ -280,37 +280,46 @@ void avl::save(string index, string data) {
 	idx << "filesize" << endl;
 	idx << filesize << endl << endl;
 	idx.close();
+	
+}
+
+void avl::savedata(string data) {
+	fstream dat((data + ".dat").c_str(), ios::binary | ios::in | ios::out);
+	rec_save_data(root, dat);
 	dat.close();
 }
 
-void avl::rec_save(node* n, ofstream& idx, fstream& dt, string adr) {
+void avl::rec_save_idx(node* n, ofstream& idx,string adr) {
+	if (n == NULL)
+		return;
+	idx << adr << " " << n->key << " " << n->address << endl;
+	
+	rec_save_idx(n->lchild, idx,  adr + "0");
+	rec_save_idx(n->rchild, idx,  adr + "1");
+}
+
+void avl::rec_save_data(node* n, fstream& dt) {
 	if (n == NULL)
 		return;
 	int datasize = sizeof(int) + sizeof(char) * 12;//DIY
-	if (n->is_fresh == false) {
-		idx << adr << " " << n->key << " " << n->address << endl;
-
-	}
-	else if (n->is_fresh =true){
+	if (n->is_fresh == true) {
 		if (overlap.size() != 0) {
 			n->address = overlap[0];
 			overlap.erase(overlap.begin());
-			
+
 		}
 		else {
 			n->address = filesize;
 			filesize++;
-			
+
 		}
 		dt.seekp(datasize*(n->address), ios::beg);
-		idx << adr << " " << n->key << " " << n->address << endl;
-		
 		dt.write((char*)&(n->value->i), sizeof(int));
 		dt.write((char*)&(n->value->s)[0], sizeof(char) * 12);
+		n->is_fresh = false;
 	}
-	n->is_fresh = false;
-	rec_save(n->lchild, idx, dt, adr + "0");
-	rec_save(n->rchild, idx, dt, adr + "1");
+	rec_save_data(n->lchild, dt);
+	rec_save_data(n->rchild, dt);
 }
 
 void avl::load(string index,string data) {

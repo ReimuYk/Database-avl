@@ -42,7 +42,10 @@ public:
 	void load(string index,string data);
 	void adjust_height(node* n);
 	void save(string index,string data);
-	void rec_save(node* n, ofstream& idx, fstream& dt, string adr);
+	void savedata(string data);
+	void rec_save_idx(node* n, ofstream& idx, string adr);
+	void rec_save_data(node* n, fstream& dt);
+	
 
 	node* root;
 	int number;

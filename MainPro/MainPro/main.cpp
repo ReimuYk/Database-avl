@@ -3,8 +3,10 @@
 #include"AVLtree.h"
 #include<ctime>
 #include<random>
+#include<sstream>
 using namespace std;
 
+void commandGUI();
 void MainTest(); //a test from ppt
 void test1(); //insert()
 void test2(); //insert() & del()
@@ -16,7 +18,8 @@ void test6(); //read file;
 void printTree(node* n);
 
 int main() {
-	MainTest();
+	//MainTest();
+	commandGUI();
 	system("pause");
 	return 0;
 }
@@ -41,6 +44,12 @@ void MainTest() {
 	end = clock();
 	cost = end - start;
 	cout << "Time cost(save):" << cost / 1000 << "s" << endl << endl;
+
+	start = clock();
+	t.load("index", "data");
+	end = clock();
+	cost = end - start;
+	cout << "Time cost(load):" << cost / 1000 << "s" << endl << endl;
 
 	start = clock();
 	for (int k = 0; k < 1000000; k++) {
@@ -125,6 +134,17 @@ void MainTest() {
 	end = clock();
 	cost = end - start;
 	cout << "Time cost(cycle test):" << cost / 1000 << "s" << endl << endl;
+
+	start = clock();
+	for (int k = 1; k < 500001; k++) {
+		temp = rand() * 1000000;
+		k % 37;
+		k % 11;
+		k % 17;
+	}
+	end = clock();
+	cost = end - start;
+	cout << "Time cost(random):" << cost / 1000 << "s" << endl << endl;
 
 	start = clock();
 	while (t.root) {
@@ -247,6 +267,8 @@ void test6() {
 
 
 
+
+
 //key: l r LR h fresh adr
 void printTree(node* n) {
 	if (n != NULL) {
@@ -264,5 +286,77 @@ void printTree(node* n) {
 		cout << endl;
 		printTree(n->lchild);
 		printTree(n->rchild);
+	}
+}
+
+void commandGUI() {
+	avl tree;
+	string input;
+	double start, end;
+	while (true) {
+		cout << ">>> ";
+		getline(cin, input);
+		stringstream ss;
+		ss << input;
+		string func;
+		ss >> func;
+		if (func == "quit") {
+			cout << "Wait to save...";
+			start = clock();
+			tree.save("index2", "data2");
+			end = clock();
+			cout << "Have done." << (end - start) / 1000 << "s" << endl;
+			return;
+		}
+		else if (func == "load") {
+			cout << "Wait to load...";
+			start = clock();
+			tree.load("index2", "data2");
+			end = clock();
+			cout << "Have done." << (end - start) / 1000 << "s" << endl << endl;
+		}
+		else if (func == "save") {
+			cout << "Wait to save...";
+			start = clock();
+			tree.savedata("data2");
+			end = clock();
+			cout << "Have done." << (end - start) / 1000 << "s" << endl << endl;
+		}
+		else if (func == "insert") {
+			start = clock();
+			int kk = 0;
+			int v1 = 0;
+			char v2[12];
+			string _v2;
+			ss >> kk;
+			ss >> v1;
+			ss >> _v2;
+			strcpy_s(v2, _v2.c_str());
+			datatype* d = new datatype;
+			d->i = v1;
+			strcpy_s(d->s, v2);
+			tree.insert(tree.root, kk, d);
+			end = clock();
+			cout << "Have done." << (end - start) / 1000 << "s" << endl << endl;
+		}
+		else if (func == "find") {
+			start = clock();
+			int kk = 0;
+			ss >> kk;
+			datatype* d = tree.scan(kk);
+			end = clock();
+			double cost = (end - start) / 1000;
+			if (d == NULL) {
+				cout << "Not found." << cost << "s" << endl << endl;
+			}
+			else {
+				cout << "int:\t" << d->i << endl;
+				cout << "stirng:\t" << d->s << endl;
+				cout << "Have done." << cost << "s" << endl << endl;
+			}
+		}
+		
+
+
 	}
 }

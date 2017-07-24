@@ -1,4 +1,6 @@
-﻿  main.cpp
-f:\_main\程序设计\git\database-avl\mainpro\mainpro\main.cpp(55): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+﻿  AVLtree.cpp
+f:\_main\程序设计\git\database-avl\mainpro\mainpro\avltree.cpp(275): warning C4018: “<”: 有符号/无符号不匹配
+f:\_main\程序设计\git\database-avl\mainpro\mainpro\avltree.cpp(347): warning C4018: “<”: 有符号/无符号不匹配
+f:\_main\程序设计\git\database-avl\mainpro\mainpro\avltree.cpp(154): warning C4715: “avl::change”: 不是所有的控件路径都返回值
   MainPro.vcxproj -> F:\_Main\程序设计\git\Database-avl\MainPro\Debug\MainPro.exe
   MainPro.vcxproj -> F:\_Main\程序设计\git\Database-avl\MainPro\Debug\MainPro.pdb (Full PDB)
